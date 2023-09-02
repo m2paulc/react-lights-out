@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Cell from './Cell';
+import './Board.css';
 
 export default class Board extends Component {
   static defaultProps = {
@@ -41,24 +42,71 @@ export default class Board extends Component {
         let coordinates = `${y}-${x}`;
         row.push(
           <Cell key={ coordinates }
-            isLit={ this.state.board[y][x] } />
+            isLit={ this.state.board[y][x] }
+            flipCellsAroundMe={ () => this.flipCells(coordinates) }
+          />
         );
       }
       tableBoard.push(
         <tr key={ y }>{ row }</tr>
       );
     }
-    console.log(tableBoard);
-    return tableBoard;
+    return (
+      <table className='Board'>
+        <tbody>
+          { tableBoard }
+        </tbody>
+      </table>
+    );
+  }
+
+  flipCells(coord) {
+    console.log('flipCells has been called');
+    let { nrows, ncols } = this.props;
+    let board = this.state.board;
+    let [y, x] = coord.split('-').map(Number);
+
+    const flipCell = (y, x) => {
+      if (y >= 0 && y < nrows && x >= 0 && x < ncols) {
+        board[y][x] = !board[y][x];
+      }
+    };
+    //flip initial cell
+    flipCell(y, x);
+    //flip cell left of initial cell
+    flipCell(y, x - 1);
+    //flip cell top of initial cell
+    flipCell(y - 1, x);
+    //flip cell right of initial cell 
+    flipCell(y, x + 1);
+    //flip cell below of initial cell 
+    flipCell(y + 1, x);
+
+    let hasWon = board.every(row => row.every(cell => !cell));
+
+    this.setState({ board, hasWon });
   }
 
   render() {
     return (
-      <table className='flex justify-center align-middle'>
-        <tbody>
-          { this.makeBoard() }
-        </tbody>
-      </table>
+      <div>
+        {
+          this.state.hasWon ? (
+            <div className='winner'>
+              <span className='neon-orange'>YOU</span>
+              <span className='neon-blue'>WIN!</span>
+            </div>
+          ) : (
+            <div>
+              <div className='Board-title'>
+                <div className='neon-orange'>Lights</div>
+                <div className='neon-blue'>Out</div>
+              </div>
+              { this.makeBoard() }
+            </div>
+          )
+        }
+      </div>
     );
   }
 }

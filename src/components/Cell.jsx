@@ -9,7 +9,7 @@ export default class Cell extends Component {
   }
 
   handleClick(event) {
-    console.log('handleClick here');
+    this.props.flipCellsAroundMe();
   }
 
   render() {
@@ -22,5 +22,6 @@ export default class Cell extends Component {
 }
 
 Cell.propTypes = {
-  isLit: PropTypes.bool
+  isLit: PropTypes.bool,
+  flipCellsAroundMe: PropTypes.func
 };
