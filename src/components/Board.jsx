@@ -61,7 +61,6 @@ export default class Board extends Component {
   }
 
   flipCells(coord) {
-    console.log('flipCells has been called');
     let { nrows, ncols } = this.props;
     let board = this.state.board;
     let [y, x] = coord.split('-').map(Number);
